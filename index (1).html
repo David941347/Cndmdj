@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f4f8ff"><title>SnowSearch Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--a:#3978f6;--ar:57,120,246;--bg:#f2f7fd;--card:#fff;--tx:#17243a;--mut:#7b899d;--line:#e6edf6;--shadow:0 10px 30px #24447812}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{margin:0;background:radial-gradient(ellipse at 0 0,#dcecff 0,transparent 38%),var(--bg);color:var(--tx);font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;padding-bottom:calc(90px + env(safe-area-inset-bottom));transition:.2s}
+body.dark{--bg:#111927;--card:#1d293b;--tx:#f0f5ff;--mut:#9eacc1;--line:#344155;--shadow:0 12px 32px #0003;background:radial-gradient(ellipse at 0 0,#172c4b,transparent 40%),var(--bg)}
+.app{max-width:560px;margin:auto;padding:16px}.top{display:flex;align-items:center;justify-content:space-between;margin:4px 2px 20px}.brand{display:flex;gap:11px;align-items:center}.logo{width:44px;height:44px;border-radius:15px;background:linear-gradient(140deg,var(--a),#91caff);display:grid;place-items:center;color:white;font-size:24px;font-weight:900;box-shadow:0 7px 18px #3978f633}.brand b{font-size:20px}.brand small{display:block;color:var(--mut);font-size:12px;margin-top:3px}.topimg{width:40px;height:40px;border-radius:50%;object-fit:cover;background:var(--card);border:2px solid var(--a)}
+.page{display:none}.page.active{display:block;animation:fade .2s}@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.hero{border-radius:27px;padding:25px;color:#fff;background:linear-gradient(135deg,var(--a),#83c6ff);box-shadow:0 14px 32px #3978f62c;position:relative;overflow:hidden}.hero:after{content:"❄";position:absolute;right:15px;bottom:-20px;font-size:110px;opacity:.17}.eyebrow{font-size:11px;letter-spacing:1.4px;font-weight:800;opacity:.8}.hero h2{font-size:29px;line-height:1.08;letter-spacing:-.8px;margin:12px 0}.hero p{font-size:14px;line-height:1.5;max-width:330px;margin:0;opacity:.92}
+.head{display:flex;align-items:center;justify-content:space-between;margin:23px 3px 12px}.head h3{font-size:17px;margin:0}.head small{color:var(--mut)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:17px;box-shadow:var(--shadow)}.tile{min-height:116px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between}.ico{width:41px;height:41px;border-radius:14px;display:grid;place-items:center;background:rgba(var(--ar),.1);font-size:21px;color:var(--a)}.tile b{font-size:14px;display:block}.tile small{font-size:12px;color:var(--mut);display:block;margin-top:5px;line-height:1.35}
+.btn{border:0;border-radius:15px;background:var(--a);color:white;font-size:14px;font-weight:750;padding:14px 16px;width:100%;cursor:pointer;margin-top:10px}.btn.soft{background:rgba(var(--ar),.1);color:var(--a);box-shadow:none}.btn.red{background:#e64d5d}.btn.outline{background:transparent;color:var(--mut);border:1px solid var(--line);box-shadow:none}
+input,select,textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--tx);padding:13px;font:14px inherit;outline:none;margin-top:8px}label{display:block;font-size:13px;color:var(--mut);margin-top:14px}label b{display:block;color:var(--tx);font-size:14px;margin-bottom:3px}textarea{min-height:90px;resize:vertical}
+.note{font-size:12px;line-height:1.5;color:var(--mut);margin:12px 2px}.result{display:none;margin-top:12px;border-radius:16px;padding:15px;background:rgba(var(--ar),.09);overflow-wrap:anywhere}.result.show{display:block}.result b{font-size:16px}.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}.pill{font-size:11px;font-weight:800;color:var(--a);background:rgba(var(--ar),.1);padding:7px 10px;border-radius:30px}
+.profile{text-align:center;padding:22px}.avatar{width:86px;height:86px;border-radius:28px;margin:0 auto 12px;background:linear-gradient(140deg,var(--a),#91caff);display:grid;place-items:center;overflow:hidden;color:white;font-size:30px;font-weight:800}.avatar img{width:100%;height:100%;object-fit:cover}.profile h2{font-size:21px;margin:0}.profile p{font-size:13px;color:var(--mut);margin:7px 0}.idline{display:inline-block;background:rgba(var(--ar),.09);color:var(--a);padding:8px 12px;border-radius:12px;font-size:12px;margin-top:6px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.stat{background:rgba(var(--ar),.07);border-radius:14px;padding:12px 3px}.stat b{font-size:19px;display:block}.stat small{font-size:10px;color:var(--mut)}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.setting:last-child{border:0}.setting b{font-size:14px}.setting small{display:block;color:var(--mut);font-size:11px;margin-top:4px}.switch{width:46px;height:27px;position:relative;flex-shrink:0}.switch input{display:none}.track{position:absolute;inset:0;border-radius:30px;background:#bac5d5}.track:after{content:"";position:absolute;width:19px;height:19px;left:4px;top:4px;border-radius:50%;background:white;transition:.2s}.switch input:checked+.track{background:var(--a)}.switch input:checked+.track:after{transform:translateX(19px)}
+.swatches{display:flex;gap:11px;flex-wrap:wrap;margin:13px 0 4px}.swatch{width:34px;height:34px;border:3px solid var(--card);outline:2px solid transparent;border-radius:50%}.swatch.sel{outline-color:var(--tx)}
+.item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.item .ico{flex-shrink:0}.item b{font-size:13px}.item small{display:block;color:var(--mut);font-size:11px;margin-top:4px;line-height:1.4}
+.nav{position:fixed;z-index:10;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,560px);display:grid;grid-template-columns:repeat(4,1fr);gap:5px;padding:9px 12px calc(9px + env(safe-area-inset-bottom));background:var(--card);border:1px solid var(--line);border-bottom:0;border-radius:23px 23px 0 0;box-shadow:0 -8px 25px #2444780c}.nav button{border:0;background:none;color:var(--mut);border-radius:14px;padding:8px 2px;font-weight:700;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:5px}.nav button span{font-size:20px}.nav button.active{background:rgba(var(--ar),.1);color:var(--a)}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#17243a;color:white;padding:12px 16px;border-radius:14px;font-size:13px;opacity:0;pointer-events:none;transition:.2s;z-index:20}.toast.show{opacity:1}
+</style></head>
+<body><div class="app">
+<header class="top"><div class="brand"><div class="logo">❄</div><div><b>SnowSearch</b><small>Инструменты Telegram</small></div></div><img class="topimg" id="topAvatar" alt="Аватар" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="></header>
+<main>
+<section class="page active" id="p-home"><div class="hero"><div class="eyebrow">SNOWSEARCH · MINI APP</div><h2>Инструменты для Telegram</h2><p>Генерация и проверка имён, загрузка видео и управление каналами — в одном месте.</p></div>
+<div class="head"><h3>Основные функции</h3><small>Выберите раздел</small></div><div class="grid">
+<div class="card tile" onclick="go('gen')"><div class="ico">⌕</div><div><b>Юзернеймы</b><small>Настрой длину, буквы и проверку</small></div></div>
+<div class="card tile" onclick="go('download')"><div class="ico">⇩</div><div><b>Скачать видео</b><small>YouTube, TikTok, Instagram, X и другие</small></div></div>
+<div class="card tile" onclick="go('channels')"><div class="ico">▤</div><div><b>Каналы</b><small>Мониторинг, статистика, посты и розыгрыши</small></div></div>
+<div class="card tile" onclick="go('profile')"><div class="ico">◉</div><div><b>Профиль</b><small>Telegram ID, аватар и оформление</small></div></div></div>
+<div class="head"><h3>Дополнительно</h3></div><div class="card">
+<div class="item"><div class="ico">★</div><div><b>Купить звёзды</b><small>Раздел заказа Telegram Stars из бота</small></div><button class="btn soft" style="width:auto;margin:0" onclick="go('stars')">Открыть</button></div>
+<div class="item"><div class="ico">♧</div><div><b>Поддержка</b><small>Связь с поддержкой SnowSearch</small></div><button class="btn soft" style="width:auto;margin:0" onclick="openSupport()">Написать</button></div></div>
+<p class="note">Веб-интерфейс отображает разделы исходного бота. Для реальной проверки username, скачивания, статистики и публикаций нужно подключить серверные API существующего бота.</p></section>
+
+<section class="page" id="p-gen"><div class="head" style="margin-top:4px"><h3>Генерация юзернеймов</h3><span class="pill">Проверка t.me + Fragment</span></div>
+<div class="card"><p class="note" style="margin-top:0">Как в исходном боте: можно выбрать длину 5–8 символов либо задать первую и последнюю буквы. Проверка выполняется по Telegram и Fragment, имя считается свободным только после обеих проверок.</p>
+<div class="head" style="margin:14px 0 8px"><h3>Выберите длину</h3></div>
+<div class="row" style="gap:10px">
+<button type="button" class="btn len-btn" id="len5" onclick="setGenLength('5')">5 букв</button>
+<button type="button" class="btn len-btn soft" id="len6" onclick="setGenLength('6')">6 букв</button>
+</div>
+<label><b>Другие параметры</b><select id="genMode" onchange="toggleCustom()"><option value="5">5 букв</option><option value="6">6 букв</option><option value="custom">Свои буквы и длина</option></select></label>
+<div id="customFields" style="display:none"><div class="row"><div><label><b>Первая буква (необязательно)</b><input id="firstLetter" maxlength="1" placeholder="a-z"></label></div><div><label><b>Последняя буква (необязательно)</b><input id="lastLetter" maxlength="1" placeholder="a-z"></label></div></div><label><b>Общая длина</b><select id="customLength"><option>5</option><option>6</option><option>7</option><option>8</option></select></label></div>
+<button class="btn" onclick="requestBot('generate')">Сгенерировать и проверить</button><div class="result" id="genResult"><b id="genOutput">Ожидание ответа бота</b><p id="genDesc" class="note">Чтобы запускать проверку на сервере, подключите API к веб-приложению.</p></div>
+<p class="note">Генератор в исходнике создаёт буквенные варианты (a–z), без цифр и подчёркиваний. Здесь форма сохраняет параметры и передаёт их будущему API.</p></div>
+<div class="head"><h3>Отдельная проверка имени</h3></div><div class="card"><label><b>Username для проверки</b><input id="checkName" placeholder="Например, snowx" maxlength="32"></label><button class="btn soft" onclick="requestBot('check')">Проверить Telegram + Fragment</button><div id="checkResult" class="result"></div></div>
+<div class="head"><h3>Что проверяется</h3></div><div class="card"><div class="item"><div class="ico">ⓣ</div><div><b>Telegram t.me</b><small>Проверка существующей страницы имени</small></div></div><div class="item"><div class="ico">◇</div><div><b>Fragment</b><small>Проверка наличия имени на Fragment: занято, зарезервировано, продано или свободно</small></div></div></div></section>
+
+<section class="page" id="p-download"><div class="head" style="margin-top:4px"><h3>Скачать видео</h3><span class="pill">Без водяного знака*</span></div><div class="card"><p class="note" style="margin-top:0">Вставьте ссылку на видео. Исходный бот использует yt-dlp и поддерживает YouTube, TikTok, Instagram, X/Twitter и другие платформы.</p><label><b>Ссылка на видео</b><input id="videoUrl" placeholder="https://..." inputmode="url"></label><button class="btn" onclick="requestBot('download')">Отправить боту на скачивание</button><div id="downloadResult" class="result">Запрос подготовлен. После подключения backend бот обработает ссылку и отправит файл в Telegram.</div><p class="note">*Возможность скачивания зависит от платформы, доступности ролика и ограничений источника.</p></div></section>
+
+<section class="page" id="p-channels"><div class="head" style="margin-top:4px"><h3>Управление каналами</h3><span class="pill">Для администраторов</span></div>
+<div class="card"><p class="note" style="margin-top:0">Чтобы подключить канал, откройте бота и перешлите ему любое сообщение из своего канала — бот должен быть администратором. Уже подключённые каналы показывает кнопка ниже.</p><button class="btn soft" onclick="requestBot('channel')">Показать мои каналы</button>
+<label><b>ID канала</b><input id="channelId" placeholder="Например, -1001234567890" inputmode="numeric"></label><p class="note">ID канала бот присылает в чате после нажатия «Показать мои каналы» — скопируйте его сюда, чтобы использовать инструменты ниже.</p></div>
+<div class="head"><h3>Инструменты канала</h3><small>Требуют ID канала выше</small></div><div class="grid">
+<div class="card tile" onclick="channelAction('stats')"><div class="ico">▥</div><div><b>Статистика</b><small>Подписчики, вступления, реакции за период</small></div></div>
+<div class="card tile" onclick="go('post-section')"><div class="ico">✎</div><div><b>Создать пост</b><small>Текст, кнопка со ссылкой и цвет</small></div></div>
+<div class="card tile" onclick="go('giveaway-section')"><div class="ico">🎁</div><div><b>Розыгрыш</b><small>Приз, победители, дата и условия</small></div></div>
+<div class="card tile" onclick="go('protection-section')"><div class="ico">♧</div><div><b>Защита</b><small>Антиспам и подозрительные подписки</small></div></div></div>
+<div class="head"><h3>Статистика за период</h3></div><div class="card"><label><b>Период</b><select id="statsPeriod"><option value="day">День</option><option value="week" selected>Неделя</option><option value="month">Месяц</option><option value="all">Всё время</option></select></label><button class="btn" onclick="channelAction('stats')">Запросить статистику</button><div id="channelResult" class="result"></div></div>
+<div class="head" id="post-section"><h3>Создание поста</h3></div><div class="card"><label><b>Текст публикации</b><textarea id="postText" placeholder="Напишите текст поста..."></textarea></label><label><b>Текст кнопки (необязательно)</b><input id="postButtonText" placeholder="Например, Открыть канал"></label><label><b>URL кнопки</b><input id="postButtonUrl" placeholder="https://t.me/..."></label><label><b>Цвет кнопки</b><select id="postButtonColor"><option value="primary">Синяя</option><option value="success">Зелёная</option><option value="danger">Красная</option></select></label><button class="btn" onclick="requestBot('post')">Опубликовать в канал</button><p class="note">Публикация требует прав администратора бота в канале.</p></div>
+<div class="head" id="giveaway-section"><h3>Создать розыгрыш</h3></div><div class="card"><label><b>Приз</b><input id="prize" placeholder="Что разыгрываем?"></label><div class="row"><div><label><b>Победителей</b><input id="winners" type="number" min="1" value="1"></label></div><div><label><b>Дата и время завершения</b><input id="endTime" type="datetime-local"></label></div></div><label><b>Обязательные каналы (через запятую)</b><input id="requiredChannels" placeholder="@channel1, @channel2"></label><button class="btn" onclick="requestBot('giveaway')">Опубликовать розыгрыш</button></div>
+<div class="head" id="protection-section"><h3>Защита от накрутки</h3></div><div class="card"><div class="setting"><div><b>Проверка новых участников</b><small>Включить серверную проверку подозрительных подписок</small></div><label class="switch"><input id="antiRaid" type="checkbox"><span class="track"></span></label></div><div class="setting"><div><b>Фильтр пустых профилей</b><small>Обнаружение аккаунтов по заданным критериям риска</small></div><label class="switch"><input id="emptyProfiles" type="checkbox"><span class="track"></span></label></div><button class="btn soft" onclick="requestBot('protection')">Сохранить настройки защиты</button><p class="note">Удаление пользователей выполняется сервером с правами администратора; критерии фильтра нужно настраивать аккуратно, чтобы не задеть обычных участников.</p></div>
+</section>
+
+<section class="page" id="p-stars"><div class="head" style="margin-top:4px"><h3>Telegram Stars</h3></div><div class="card"><p class="note" style="margin-top:0">В исходном боте есть меню пакетов Stars и проверка статуса заказа.</p><label><b>Пакет</b><select id="starsPack"><option value="small">Малый пакет</option><option value="medium">Средний пакет</option><option value="large">Большой пакет</option></select></label><button class="btn" onclick="requestBot('stars')">Открыть покупку в боте</button><p class="note">Цены и условия следует получать из текущего обработчика платежей бота, а не задавать статически на сайте.</p></div></section>
+
+<section class="page" id="p-profile"><div class="head" style="margin-top:4px"><h3>Профиль Telegram</h3><span class="pill">Ваш аккаунт</span></div>
+<div class="card profile"><div class="avatar" id="profileAvatar">S</div><h2 id="profileName">Пользователь Telegram</h2><p id="profileUsername">Username не указан</p><div class="idline">Telegram ID: <b id="profileId">Доступен в Telegram Mini App</b></div><div class="stats"><div class="stat"><b id="statGen">—</b><small>Генераций</small></div><div class="stat"><b id="statUser">—</b><small>Аккаунт</small></div><div class="stat"><b>Mini App</b><small>Клиент</small></div></div></div>
+<div class="head"><h3>Оформление</h3><small>Сохраняется локально</small></div><div class="card"><div class="setting"><div><b>Тёмная тема</b><small>Изменить фон и карточки</small></div><label class="switch"><input id="darkToggle" type="checkbox" onchange="toggleDark(this.checked)"><span class="track"></span></label></div><label><b>Основной цвет сайта</b></label><div class="swatches"><button class="swatch sel" style="background:#3978f6" onclick="accent('#3978f6','57,120,246',this)"></button><button class="swatch" style="background:#18a979" onclick="accent('#18a979','24,169,121',this)"></button><button class="swatch" style="background:#e64d5d" onclick="accent('#e64d5d','230,77,93',this)"></button><button class="swatch" style="background:#f08a28" onclick="accent('#f08a28','240,138,40',this)"></button><button class="swatch" style="background:#8758e8" onclick="accent('#8758e8','135,88,232',this)"></button><button class="swatch" style="background:#11a8bd" onclick="accent('#11a8bd','17,168,189',this)"></button></div><div class="setting"><div><b>Плавные переходы</b><small>Анимация между разделами</small></div><label class="switch"><input id="motionToggle" type="checkbox" checked onchange="toggleMotion(this.checked)"><span class="track"></span></label></div></div>
+<div class="head"><h3>Информация</h3></div><div class="card"><div class="item"><div class="ico">❄</div><div><b>SnowSearch</b><small>Версия Mini App 2.0 · интерфейс для существующего Telegram-бота</small></div></div><div class="item"><div class="ico">ⓘ</div><div><b>Приватность</b><small>Имя, username, аватар и ID берутся из Telegram WebApp SDK. Данные отображаются только при запуске внутри Telegram.</small></div></div></div></section>
+</main></div>
+<nav class="nav"><button class="active" data-p="home" onclick="go('home')"><span>⌂</span>Главная</button><button data-p="gen" onclick="go('gen')"><span>⌕</span>Юзернеймы</button><button data-p="channels" onclick="go('channels')"><span>▤</span>Каналы</button><button data-p="profile" onclick="go('profile')"><span>◉</span>Профиль</button></nav><div class="toast" id="toast"></div>
+<script>
+const tg=window.Telegram?.WebApp;if(tg){tg.ready();tg.expand();try{tg.setHeaderColor('secondary_bg_color');tg.setBackgroundColor('#f2f7fd')}catch(e){}}
+const K='snowsearch_site_settings_v2';let s={accent:'#3978f6',rgb:'57,120,246',dark:false,motion:true};try{s={...s,...JSON.parse(localStorage.getItem(K)||'{}')}}catch(e){}
+function save(){localStorage.setItem(K,JSON.stringify(s))}
+function go(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='p-'+p));document.querySelectorAll('.nav button').forEach(x=>x.classList.toggle('active',x.dataset.p===p));window.scrollTo({top:0,behavior:s.motion?'smooth':'auto'})}
+function toast(t){let x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),2400)}
+function accent(hex,rgb,el){s.accent=hex;s.rgb=rgb;apply();document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('sel'));el.classList.add('sel');save();toast('Цвет изменён')}
+function toggleDark(v){s.dark=v;apply();save()}
+function toggleMotion(v){s.motion=v;save();toast('Настройка сохранена')}
+function apply(){document.documentElement.style.setProperty('--a',s.accent);document.documentElement.style.setProperty('--ar',s.rgb);document.body.classList.toggle('dark',s.dark);document.getElementById('darkToggle').checked=s.dark;document.getElementById('motionToggle').checked=s.motion;document.querySelectorAll('.swatch').forEach(x=>x.classList.toggle('sel',x.style.backgroundColor===hexToRgb(s.accent)))}
+function hexToRgb(h){let n=parseInt(h.slice(1),16);return `rgb(${n>>16&255}, ${n>>8&255}, ${n&255})`}
+function setGenLength(n){
+ const sel=document.getElementById('genMode'); sel.value=n;
+ document.getElementById('customFields').style.display='none';
+ document.getElementById('len5').classList.toggle('soft',n!=='5');
+ document.getElementById('len6').classList.toggle('soft',n!=='6');
+}
+function toggleCustom(){document.getElementById('customFields').style.display=document.getElementById('genMode').value==='custom'?'block':'none'}
+function telegramProfile(){let u=tg?.initDataUnsafe?.user;if(!u){document.getElementById('profileName').textContent='Откройте через Telegram';document.getElementById('profileUsername').textContent='Данные профиля доступны в Mini App';document.getElementById('profileId').textContent='Запустите приложение из бота';return}
+let name=[u.first_name,u.last_name].filter(Boolean).join(' ')||'Пользователь';document.getElementById('profileName').textContent=name;document.getElementById('profileUsername').textContent=u.username?'@'+u.username:'Username не указан';document.getElementById('profileId').textContent=u.id;document.getElementById('statUser').textContent='Telegram';let initial=(u.first_name||'S')[0].toUpperCase();let av=document.getElementById('profileAvatar'),top=document.getElementById('topAvatar');if(u.photo_url){av.innerHTML='';let im=new Image();im.src=u.photo_url;av.appendChild(im);top.src=u.photo_url}else{av.textContent=initial;top.removeAttribute('src');top.alt=initial}}
+const GK='snowsearch_gen_count_v1';
+function bumpGenCount(){let n=(+localStorage.getItem(GK)||0)+1;localStorage.setItem(GK,n);let el=document.getElementById('statGen');if(el)el.textContent=n}
+function loadGenCount(){let el=document.getElementById('statGen');if(el)el.textContent=localStorage.getItem(GK)||'0'}
+
+// Отправка данных боту: tg.sendData() закрывает Mini App и Telegram доставляет payload
+// как сообщение с web_app_data в чат с ботом — ответ бота придёт туда же новым сообщением.
+function sendToBot(data,confirmMsg){
+  if(!tg){toast('Откройте сайт из кнопки бота в Telegram, чтобы это работало');console.log('SnowSearch (нет Telegram WebApp):',data);return false}
+  try{tg.sendData(JSON.stringify(data))}catch(e){toast('Не удалось отправить данные боту');return false}
+  if(confirmMsg)toast(confirmMsg);
+  return true
+}
+
+function requestBot(kind){
+  let data={action:kind};
+  if(kind==='generate'){
+    let mode=document.getElementById('genMode').value;
+    data.length=mode==='custom'?+document.getElementById('customLength').value:+mode;
+    data.first_letter=document.getElementById('firstLetter').value.trim().toLowerCase();
+    data.last_letter=document.getElementById('lastLetter').value.trim().toLowerCase();
+    if((data.first_letter&&!/^[a-z]$/.test(data.first_letter))||(data.last_letter&&!/^[a-z]$/.test(data.last_letter))){toast('Первая и последняя буквы должны быть латинскими a-z');return}
+    if(!data.length||data.length<5||data.length>32||data.length<((data.first_letter?1:0)+(data.last_letter?1:0))){toast('Проверьте длину и заданные буквы');return}
+    let r=document.getElementById('genResult');r.classList.add('show');
+    document.getElementById('genOutput').textContent='Запрос отправлен боту...';
+    document.getElementById('genDesc').textContent='Бот подбирает и проверяет варианты через t.me и Fragment (обычно до 40 секунд). Результат придёт сообщением в чат.';
+    bumpGenCount();
+  }
+  if(kind==='check'){
+    let name=document.getElementById('checkName').value.trim().replace(/^@/,'');
+    if(!/^[a-zA-Z]{5,32}$/.test(name)){toast('Введите 5–32 латинские буквы без цифр и подчёркиваний');return}
+    data.username=name;
+    let r=document.getElementById('checkResult');r.classList.add('show');r.textContent='Проверяю @'+name+'... результат придёт в чат с ботом.';
+  }
+  if(kind==='download'){
+    let url=document.getElementById('videoUrl').value.trim();
+    if(!/^https?:\/\//i.test(url)){toast('Введите корректную ссылку');return}
+    data.url=url;
+    document.getElementById('downloadResult').classList.add('show');
+    document.getElementById('downloadResult').textContent='Ссылка отправлена боту, видео придёт сообщением в чат.';
+  }
+  if(kind==='channel'){/* без параметров: бот пришлёт список подключённых каналов */}
+  if(kind==='post'){
+    let cid=document.getElementById('channelId').value.trim();
+    if(!/^-?\d+$/.test(cid)){toast('Укажите числовой ID канала выше');return}
+    data.channel_id=cid;
+    data.post={text:document.getElementById('postText').value.trim(),button_text:document.getElementById('postButtonText').value.trim(),button_url:document.getElementById('postButtonUrl').value.trim(),button_color:document.getElementById('postButtonColor').value};
+    if(!data.post.text){toast('Введите текст поста');return}
+  }
+  if(kind==='giveaway'){
+    let cid=document.getElementById('channelId').value.trim();
+    if(!/^-?\d+$/.test(cid)){toast('Укажите числовой ID канала выше');return}
+    data.channel_id=cid;
+    let end=document.getElementById('endTime').value;
+    if(!end){toast('Укажите дату завершения розыгрыша');return}
+    data.giveaway={prize:document.getElementById('prize').value.trim(),winners:+document.getElementById('winners').value||1,end_time:new Date(end).toISOString(),required_channels:document.getElementById('requiredChannels').value.split(',').map(x=>x.trim()).filter(Boolean)};
+    if(!data.giveaway.prize){toast('Укажите приз');return}
+  }
+  if(kind==='protection'){
+    let cid=document.getElementById('channelId').value.trim();
+    if(!/^-?\d+$/.test(cid)){toast('Укажите числовой ID канала выше');return}
+    data.channel_id=cid;
+    data.protection={anti_raid:document.getElementById('antiRaid').checked,empty_profiles:document.getElementById('emptyProfiles').checked};
+  }
+  if(kind==='stars'){data.package=document.getElementById('starsPack').value}
+  sendToBot(data,'Отправлено боту — ответ придёт в чат')
+}
+
+function channelAction(action){
+  let cid=document.getElementById('channelId').value.trim();
+  if(!/^-?\d+$/.test(cid)){toast('Сначала укажите числовой ID канала');return}
+  let period=document.getElementById('statsPeriod')?document.getElementById('statsPeriod').value:'week';
+  sendToBot({action:'channel_'+action,channel_id:cid,period:period},'Запрос отправлен боту');
+  if(action==='stats'){let r=document.getElementById('channelResult');r.classList.add('show');r.textContent='Статистика запрошена, ответ придёт в чат с ботом.'}
+}
+function openSupport(){if(tg)tg.openTelegramLink('https://t.me/helperSnow');else window.open('https://t.me/helperSnow','_blank')}
+apply();telegramProfile();loadGenCount();
+</script></body></html>
